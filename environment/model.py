@@ -6,10 +6,19 @@ from numpy import linalg as LA
 import matplotlib.pyplot as plt
 import argparse
 
-A =  np.array([[1.0,1.0,0.0],[0.0,0.0,1.0],[1.0,0.0,0.0]])
-B =  np.zeros((3,1))
-B[0] = 1.0
+A =  np.random.randn(5, 5)
+#A = 0.001*(A + A.T)
+B = np.random.random((5, 1))
+#B =  np.random.random((100,1))
+#B[0] = 0.3
+#B[4] = 4.3
+#B[7] = 3.7
+#B[9] = 1.0
+#B[5] = 1.0
 Dt = 0.01
+np.savez('AB.npz', A, B)
+print ("A", A)
+print ("B", B)
 
 def diff_eqn(state, U, A = A, B = B):
 
@@ -38,7 +47,7 @@ def env_model(state, U, A = A, B = B):
 def env_new_model(state, U):
 
 	state = env_model(state, U)
-	return state + 0.1*np.random.normal(size = (len(state),1))
+	return state + 1.0*np.random.randn(len(state),1)
 
 
 

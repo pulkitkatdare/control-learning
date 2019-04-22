@@ -54,6 +54,7 @@ class DDPGAgent:
 	def train(self,env):
 		CUDA = torch.cuda.is_available()
 		print (self.actor.layer1.weight)
+		data = np.zeros(self.episode_len)
 		for i in tqdm(range(self.episode_len)):
 			start = time()
 			ep_rewards = []
@@ -76,8 +77,9 @@ class DDPGAgent:
 					epsilon = epsilon.cuda()
 				noise_exp = epsilon * exploration_noise.noise()[0] / env.action_space.high
 				a += noise_exp.unsqueeze(0)
-				a = torch.clamp(a, env.action_space.low, env.action_space.high)
+				#a = torch.clamp(a, env.action_space.low, env.action_space.high)
 				a = a.data.cpu().numpy()
+
 				s2, r, terminal, info = env.step(a)
 				ep_action_dist.append(a[0])
 				self.replay_buffer.add(np.reshape(s, (self.actor.state_dim,)),
@@ -118,7 +120,12 @@ class DDPGAgent:
 				if terminal or j == self.episode_steps - 1:
 					exploration_noise.reset()
 					break
-		print(self.actor.layer1.weight)
+			if (i%1)==0:
+				print(self.actor.layer1.weight)
+				weights = self.actor.layer1.weight.data.cpu().numpy()
+				weights = np.linalg.norm(weights)
+				data[i] = weights
+		np.savez('data.npz', data)
 
 	def test(self,env):
 		CUDA = torch.cuda.is_available()

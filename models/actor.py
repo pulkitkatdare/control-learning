@@ -27,8 +27,7 @@ class ActorNetwork(nn.Module):
 		self.optimizer = torch.optim.Adam(self.parameters(), lr=self.learning_rate)
 		
 	def forward(self,x):
-		y = self.layer1(x)
-
+		y = -self.layer1(x)
 		return x,y,y
 
 	def predict(self,x):
@@ -40,13 +39,8 @@ class ActorNetwork(nn.Module):
 		action = self.predict(states)
 		output = -torch.mean(critic.predict_target(states,action))
 		output.backward()
-		#print (Variable(0.0001*self.layer1.weight.grad.data))
-		#print (self.layer1.weight)
-		#print ("1:",self.layer1.weight.data)
-		#self.layer1.weight.data -= 0.0001*self.layer1.weight.grad.data
-		#print ("2",self.layer1.weight.data)
-
 		self.optimizer.step()
+		#print (self.layer1.weight)
 		#self.optimizer.zero_grad()
 
 	def update_target_network(self,target_actor):

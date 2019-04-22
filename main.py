@@ -27,9 +27,9 @@ def main(args):
 	CUDA = torch.cuda.is_available()
 	OUTPUT_RESULTS_DIR = './saver'
 	init_set = np.array([0, 0, 1, 1, 0, 1])
-	env = environment(env_new_model, init_set)
-	state_dim = 3
+	state_dim = 5  # 3#10#3
 	action_dim = 1
+	env = environment(env_new_model, init_set, state_dim=state_dim, action_dim=action_dim)
 	action_bound = np.array([1,-1])
 
 	actor = ActorNetwork(state_dim, action_dim, action_bound, args.actor_lr, args.tau, args.seed)
@@ -65,13 +65,13 @@ if __name__ == '__main__':
 	parser.add_argument('--seed', type=int, default=1234, help='random seed to use. Default=1234')
 	parser.add_argument('--actor_lr', type=float, default=0.0001, help='actor learning rate')
 	parser.add_argument('--critic_lr', type=float, default=0.001, help='critic learning rate')
-	parser.add_argument('--batch_size', type=int, default=2, help='critic learning rate')
+	parser.add_argument('--batch_size', type=int, default=64, help='critic learning rate')
 	parser.add_argument('--bufferlength', type=float, default=20000, help='buffer size in replay buffer')
-	parser.add_argument('--l2_decay', type=float, default=0.01, help='weight decay')
+	parser.add_argument('--l2_decay', type=float, default=1.0, help='weight decay')
 	parser.add_argument('--tau', type=float, default=0.001, help='adaptability')
-	parser.add_argument('--gamma', type=float, default=1.00, help='discount factor')
+	parser.add_argument('--gamma', type=float, default=0.0, help='discount factor')
 	parser.add_argument('--episode_len', type=int, default=1000, help='episodic lengths')
-	parser.add_argument('--episode_steps', type=int, default=100, help='steps per episode')
+	parser.add_argument('--episode_steps', type=int, default=1000, help='steps per episode')
 	parser.add_argument('--noise_mean', type=float, default=0.0, help='noise mean')
 	parser.add_argument('--noise_th', type=float, default=0.15, help='noise theta')
 	parser.add_argument('--noise_std', type=float, default=0.20, help='noise standard deviation')
